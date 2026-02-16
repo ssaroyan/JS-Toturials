@@ -1,13 +1,12 @@
-# مستندات API محصولات (Node.js HTTP Server)
+# Products API (Node.js)
 
-## معرفی
-این پروژه یک سرور ساده با **Node.js** و ماژول داخلی `http` است که یک API برای ارسال لیست محصولات به‌صورت JSON فراهم می‌کند.
+یک API ساده با Node.js که لیست محصولات را به‌صورت JSON برمی‌گرداند.
 
 ---
 
-## ساختار فایل‌ها
+## 📁 ساختار پروژه
 
-```text
+```
 project/
 ├── data/
 │   └── products.json
@@ -16,83 +15,87 @@ project/
 
 ---
 
-## توضیح کد
+## 🚀 راه‌اندازی
 
-### ایمپورت ماژول‌ها
-```js
-const http = require("http");
-const products = require("../data/products.json");
+```bash
+node server.js
 ```
 
-- `http`: ماژول داخلی Node.js برای ساخت سرور
-- `products.json`: فایل JSON که هنگام `require` شدن به **Object یا Array جاوااسکریپتی** تبدیل می‌شود
+سرور روی پورت **3000** اجرا می‌شود.
+
+---
+
+## 📌 Endpoint ها
+
+### GET `/api/products`
+
+**توضیح:**  
+لیست محصولات را به‌صورت JSON برمی‌گرداند.
+
+**نمونه پاسخ:**
+
+```json
+[
+  { "id": 1, "name": "Product 1" },
+  { "id": 2, "name": "Product 2" }
+]
+```
+
+---
+
+## 🧠 توضیح کد
+
+### ایمپورت ماژول‌ها
+
+```js
+const http = require("http");
+const products = require("./data/products.json");
+```
 
 ---
 
 ### ساخت سرور
+
 ```js
 const server = http.createServer((req, res) => {
 ```
 
-این تابع برای هر درخواست (request) اجرا می‌شود.
-
 ---
 
-### بررسی مسیر (Route)
+### بررسی Route
+
 ```js
 if (req.url === "/api/products") {
 ```
 
-در این قسمت بررسی می‌کنیم که آیا کاربر آدرس `/api/products` را درخواست کرده است یا نه.
-
-> ⚠️ توجه:
-> حتماً باید از `===` استفاده شود، نه `=`
+⚠️ از `===` استفاده کنید، نه `=`.
 
 ---
 
-### تنظیم هدر پاسخ
+### ارسال پاسخ JSON
+
 ```js
 res.writeHead(200, {
   "Content-Type": "application/json"
 });
+res.end(JSON.stringify(products));
 ```
 
 ---
 
-### ارسال داده
-```js
-res.write(JSON.stringify(products));
-```
-
-`JSON.stringify` آبجکت جاوااسکریپت را به رشته JSON تبدیل می‌کند.
-
----
-
-### پایان پاسخ
-```js
-res.end();
-```
-
----
-
-## کد کامل اصلاح‌شده
+## ✅ کد کامل
 
 ```js
 const http = require("http");
-const products = require("../data/products.json");
+const products = require("./data/products.json");
 
 const server = http.createServer((req, res) => {
   if (req.url === "/api/products") {
-    res.writeHead(200, {
-      "Content-Type": "application/json"
-    });
-    res.write(JSON.stringify(products));
-    res.end();
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(products));
   } else {
-    res.writeHead(404, {
-      "Content-Type": "text/plain"
-    });
-    res.end("Route not found");
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Not Found");
   }
 });
 
@@ -103,14 +106,22 @@ server.listen(3000, () => {
 
 ---
 
-## تست API
+## 🧪 تست API
+
 ```
 http://localhost:3000/api/products
 ```
 
 ---
 
-## جمع‌بندی
+## 📌 نکات مهم
+
 - `JSON.stringify` ضروری است
-- بدون آن سرور خطا می‌دهد
-- استفاده از `===` الزامی است
+- بدون آن `res.write` خطا می‌دهد
+- این پروژه بدون Express نوشته شده
+
+---
+
+## 📝 License
+
+MIT
