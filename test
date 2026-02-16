@@ -1,0 +1,116 @@
+# مستندات API محصولات (Node.js HTTP Server)
+
+## معرفی
+این پروژه یک سرور ساده با **Node.js** و ماژول داخلی `http` است که یک API برای ارسال لیست محصولات به‌صورت JSON فراهم می‌کند.
+
+---
+
+## ساختار فایل‌ها
+
+```text
+project/
+├── data/
+│   └── products.json
+└── server.js
+```
+
+---
+
+## توضیح کد
+
+### ایمپورت ماژول‌ها
+```js
+const http = require("http");
+const products = require("../data/products.json");
+```
+
+- `http`: ماژول داخلی Node.js برای ساخت سرور
+- `products.json`: فایل JSON که هنگام `require` شدن به **Object یا Array جاوااسکریپتی** تبدیل می‌شود
+
+---
+
+### ساخت سرور
+```js
+const server = http.createServer((req, res) => {
+```
+
+این تابع برای هر درخواست (request) اجرا می‌شود.
+
+---
+
+### بررسی مسیر (Route)
+```js
+if (req.url === "/api/products") {
+```
+
+در این قسمت بررسی می‌کنیم که آیا کاربر آدرس `/api/products` را درخواست کرده است یا نه.
+
+> ⚠️ توجه:
+> حتماً باید از `===` استفاده شود، نه `=`
+
+---
+
+### تنظیم هدر پاسخ
+```js
+res.writeHead(200, {
+  "Content-Type": "application/json"
+});
+```
+
+---
+
+### ارسال داده
+```js
+res.write(JSON.stringify(products));
+```
+
+`JSON.stringify` آبجکت جاوااسکریپت را به رشته JSON تبدیل می‌کند.
+
+---
+
+### پایان پاسخ
+```js
+res.end();
+```
+
+---
+
+## کد کامل اصلاح‌شده
+
+```js
+const http = require("http");
+const products = require("../data/products.json");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/api/products") {
+    res.writeHead(200, {
+      "Content-Type": "application/json"
+    });
+    res.write(JSON.stringify(products));
+    res.end();
+  } else {
+    res.writeHead(404, {
+      "Content-Type": "text/plain"
+    });
+    res.end("Route not found");
+  }
+});
+
+server.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+```
+
+---
+
+## تست API
+```
+http://localhost:3000/api/products
+```
+
+---
+
+## جمع‌بندی
+- `JSON.stringify` ضروری است
+- بدون آن سرور خطا می‌دهد
+- استفاده از `===` الزامی است
